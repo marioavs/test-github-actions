@@ -30,5 +30,6 @@ jobs:
         SHA_AFTER: ${{ github.event.after }}
         SHA_BEFORE: ${{ github.event.before }}
       run: |
-        echo "git diff --name-only $SHA_BEFORE..$SHA_AFTER -- somefolder01/*"
-        echo "git diff --name-only $SHA_BEFORE..$SHA_AFTER -- somefolder02/*"
+        git diff --name-only $SHA_BEFORE..$SHA_AFTER -- somefolder01/*
+        git diff --name-only $SHA_BEFORE..$SHA_AFTER -- somefolder02/*
+
