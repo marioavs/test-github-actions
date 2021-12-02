@@ -1,0 +1,34 @@
+name: ci-deploy
+on:
+  push:
+    branches: [main, qa, dev]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  ENVIRONMENT_TYPE: >-
+    ${{ fromJSON('{"refs/heads/main": "prod", "refs/heads/qa": "qa", "refs/heads/dev": "dev"}')[github.ref] }}
+
+jobs:
+
+  deploy:
+    name: Credit deploy
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Dump job event context
+      env:
+        JOB_EVENT: ${{ toJSON(github.event) }}
+      run: echo "$JOB_EVENT"
+
+    - name: Diff files
+      env:
+        SHA_AFTER: ${{ github.event.after }}
+        SHA_BEFORE: ${{ github.event.before }}
+      run: |
+        echo "git diff --name-only $SHA_BEFORE..$SHA_AFTER -- somefolder01/*"
+        echo "git diff --name-only $SHA_BEFORE..$SHA_AFTER -- somefolder02/*"
