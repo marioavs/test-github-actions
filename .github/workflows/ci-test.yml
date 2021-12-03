@@ -36,7 +36,7 @@ jobs:
         IFS=,; read -ra PATHSARR <<< $PATHS_EVALUATION
         DIFFARR=()
         for i in "${PATHSARR[@]}"; do if [[ $(git diff --name-only $SHA_BEFORE..$SHA_AFTER -- $i) ]]; then DIFFARR+=("\"$i\""); fi done
-        echo "::set-output name=DIFF::[${DIFFARR[*]}]"
+        IFS=,; echo "::set-output name=DIFF::[${DIFFARR[*]}]"
 
     - name: Log Path Diff
       env:

@@ -1,5 +1,5 @@
 Second file, first line
-additional line
+# additional line
 third line, second file
 another line
 line 5
