@@ -45,15 +45,15 @@ jobs:
       run: echo "$DIFF"
 
     - name: Folder 01
-      if: contains(fromJSON(steps.diff_list.outputs.DIFF), "somefolder01/")
+      if: contains(fromJSON(steps.diff_list.outputs.DIFF), 'somefolder01/')
       run: echo "Running step for somefolder01"
 
     - name: Folder 02
-      if: contains(fromJSON(steps.diff_list.outputs.DIFF), "somefolder02/")
+      if: contains(fromJSON(steps.diff_list.outputs.DIFF), 'somefolder02/')
       run: echo "Running step for somefolder02"
 
     - name: Folder 03
-      if: contains(fromJSON(steps.diff_list.outputs.DIFF), "somefolder03/")
+      if: contains(fromJSON(steps.diff_list.outputs.DIFF), 'somefolder03/')
       run: echo "Running step for somefolder03"
 
 
