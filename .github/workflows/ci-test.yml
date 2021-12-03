@@ -11,23 +11,32 @@ env:
 
 jobs:
 
-  common:
-    name: Common steps
+  deploy:
+    name: repo deploy
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+       include:
+       - setup: true
+       - flag: true
+         folder: somepathx/
 
     steps:
 
     - name: Checkout
+      if: matrix.setup
       uses: actions/checkout@v2
       with:
         fetch-depth: 2
 
     - name: Dump job event context
+      if: matrix.setup
       env:
         JOB_EVENT: ${{ toJSON(github.event) }}
       run: echo "$JOB_EVENT"
 
     - name: Set diff list
+      if: matrix.setup
       id: diff_list
       env:
         PATHS_EVALUATION: somefolder01/,somefolder02/,somefolder03/
@@ -39,19 +48,14 @@ jobs:
         for i in "${PATHSARR[@]}"; do if [[ $(git diff --name-only $SHA_BEFORE..$SHA_AFTER -- $i) ]]; then DIFFARR+=("\"$i\""); fi done
         echo "::set-output name=DIFF::[${DIFFARR[*]}]"
 
-  deploy:
-    name: repo deploy
-    needs: common
-    runs-on: ubuntu-latest
-
-    steps:
-
     - name: Log Path Diff
+      if: matrix.flag
       env:
         DIFF: ${{ steps.diff_list.outputs.DIFF }}
       run: echo "$DIFF"
 
     - name: Confirm checkout available
+      if: matrix.flag
       env:
         PATHS_EVALUATION: somefolder01/,somefolder02/,somefolder03/
         SHA_AFTER: ${{ github.event.after }}
@@ -63,15 +67,15 @@ jobs:
         git diff --name-only $SHA_BEFORE..$SHA_AFTER
 
     - name: Folder 01
-      if: contains(fromJSON(steps.diff_list.outputs.DIFF), 'somefolder01/')
+      if: matrix.flag && contains(fromJSON(steps.diff_list.outputs.DIFF), 'somefolder01/')
       run: echo "Running step for somefolder01"
 
     - name: Folder 02
-      if: contains(fromJSON(steps.diff_list.outputs.DIFF), 'somefolder02/')
+      if: matrix.flag && contains(fromJSON(steps.diff_list.outputs.DIFF), 'somefolder02/')
       run: echo "Running step for somefolder02"
 
     - name: Folder 03
-      if: contains(fromJSON(steps.diff_list.outputs.DIFF), 'somefolder03/')
+      if: matrix.flag && contains(fromJSON(steps.diff_list.outputs.DIFF), 'somefolder03/')
       run: echo "Running step for somefolder03"
 
 
